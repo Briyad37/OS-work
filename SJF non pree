@@ -1,0 +1,64 @@
+#include <iostream>
+#include <algorithm>
+#include <numeric>
+using namespace std;
+
+struct Process {
+    int id;
+    int arrivalTime;
+    int burstTime;
+};
+
+//to compare arrival time of two processes
+bool compareArrivalTime(const Process& a, const Process& b) {
+    return a.arrivalTime < b.arrivalTime;
+}
+
+//to compare burst time of two processes
+bool compareBurstTime(const Process& a, const Process& b) {
+    return a.burstTime < b.burstTime;
+}
+
+void calculateWaitingTimeSJF(Process processes[], int waitingTime[], int n) {
+    waitingTime[0] = 0;
+
+    for (int i = 1; i < n; ++i) {
+        waitingTime[i] = waitingTime[i - 1] + processes[i - 1].burstTime;
+    }
+}
+
+int main() {
+    int n; // Number of processes
+    cout << "Enter the number of processes: ";
+    cin >> n;
+
+    Process processes[n];
+
+    // Input process details
+    for (int i = 0; i < n; ++i) {
+        processes[i].id = i + 1;
+        cout << "Enter arrival time for Process " << i + 1 << ": ";
+        cin >> processes[i].arrivalTime;
+        cout << "Enter burst time for Process " << i + 1 << ": ";
+        cin >> processes[i].burstTime;
+    }
+
+    // Sort processes based on arrival time
+    sort(processes, processes + n, compareArrivalTime);
+
+    int waitingTimeSJF[n] = {0};
+    calculateWaitingTimeSJF(processes, waitingTimeSJF, n);
+
+    // Display waiting times
+    cout << "\nWaiting Time for each process (SJF):\n";
+    for (int i = 0; i < n; ++i) {
+        cout << "Process " << processes[i].id << ": SJF=" << waitingTimeSJF[i] << endl;
+    }
+
+    // Calculate average waiting time
+    double avgWaitingTimeSJF = accumulate(waitingTimeSJF, waitingTimeSJF + n, 0.0) / n;
+    cout << "\nAverage Waiting Time (SJF): " << avgWaitingTimeSJF << endl;
+
+    return 0;
+}
+
